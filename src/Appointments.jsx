@@ -33,7 +33,7 @@ function Appointments() {
   if (appointments.length === 0) return <p>Você não tem agendamentos.</p>
 
   return (
-    <div className="p-4">
+    <div className="p-10 pt-20">
       <h2 className="text-xl font-bold mb-4">Meus Agendamentos</h2>
       <ul>
         {appointments.map((appt) => (

@@ -33,6 +33,14 @@ export default function Navbar() {
           >
             Agendamentos
           </NavLink>
+          <NavLink
+            to="/services"
+            className={({ isActive }) => 
+              isActive ? 'text-pink-600 font-semibold' : 'text-gray-700 hover:text-pink-500'
+            }
+          >
+            Serviços
+          </NavLink>
           <button
             onClick={handleLogout}
             className="text-gray-700 hover:text-pink-500 font-semibold"

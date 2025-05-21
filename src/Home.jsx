@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import React from 'react'
-import Navbar from './Navbar'
+import Navbar from "./components/Navbar"
 
 const cardsData = [
   {
@@ -28,7 +28,6 @@ const cardsData = [
 export default function Home() {
   return (
     <>
-      <Navbar />
       {/* Espaço para compensar navbar fixa */}
       <div className="pt-20 max-w-7xl mx-auto px-4">
         {/* Banner */}

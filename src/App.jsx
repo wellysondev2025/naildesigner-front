@@ -3,11 +3,18 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import AuthForm from './AuthForm'
 import Home from './Home'
 import Appointments from './Appointments'
-import { PrivateRoute } from './PrivateRoute'
+import { PrivateRoute } from "./PrivateRoute";
+import Services from './components/Services'
+import Navbar from './components/Navbar'  // ou o caminho correto para o seu arquivo Navbar.jsx
+
+
 
 function App() {
   return (
+    <>
+    <Navbar />
     <Routes>
+      <Route path="/services" element={<Services />} />
       <Route path="/auth" element={<AuthForm />} />
       <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
       <Route path="/appointments" element={<PrivateRoute><Appointments /></PrivateRoute>} />
@@ -16,6 +23,7 @@ function App() {
         localStorage.getItem('access') ? <Navigate to="/home" /> : <Navigate to="/auth" />
       } />
     </Routes>
+    </>
   )
 }
 
