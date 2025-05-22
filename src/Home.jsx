@@ -34,10 +34,8 @@ const cardVariants = {
 export default function Home() {
   return (
     <>
-      {/* Navbar fixa */}
       <Navbar />
 
-      {/* Espaço para compensar navbar fixa */}
       <div className="pt-20 max-w-7xl mx-auto px-4">
         {/* Banner */}
         <div
@@ -50,12 +48,12 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Cards animados */}
+        {/* Cards com animação */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {cardsData.map(({ img, title, description }, index) => (
             <motion.div
               key={index}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+              className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
               variants={cardVariants}
               initial="hidden"
               animate="visible"

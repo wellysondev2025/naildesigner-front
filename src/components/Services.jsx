@@ -1,39 +1,72 @@
 import React, { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import Navbar from './Navbar'
+import { useNavigate } from 'react-router-dom'
 
 export default function Services() {
   const [services, setServices] = useState([])
-  const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/services/')  // Ajusta para sua URL real
-      .then(res => res.json())
-      .then(data => {
-        setServices(data)
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
+    fetch('http://localhost:8000/api/services/')
+      .then((res) => res.json())
+      .then((data) => setServices(data))
+      .catch((err) => console.error('Erro ao buscar serviços:', err))
   }, [])
 
-  if (loading) return <p>Carregando serviços...</p>
-  if (!services.length) return <p>Nenhum serviço disponível.</p>
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  }
 
   return (
-    <div className="pt-20 grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-      {services.map(service => (
-        <div key={service.id} className="border rounded p-4 shadow">
-          <img src={service.image_url} alt={service.title} className="w-full h-48 object-cover rounded" />
-          <h3 className="text-xl font-semibold mt-2">{service.title}</h3>
-          <p className="mt-1 text-gray-600">{service.description}</p>
-          <button
-            className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-            onClick={() => {
-              // Aqui você vai tratar a lógica para agendar
-            }}
-          >
-            Agendar
-          </button>
-        </div>
-      ))}
-    </div>
+    <>
+      <Navbar />
+
+      <div className="pt-20 max-w-7xl mx-auto px-4">
+        <h1 className="text-3xl font-bold text-center text-pink-600 mb-10">
+          Nossos Serviços
+        </h1>
+
+        {services.length === 0 ? (
+          <p className="text-center text-gray-600">Nenhum serviço disponível.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {services.map((service, index) => (
+              <motion.div
+                key={service.id || index}
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                variants={cardVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: index * 0.1, duration: 0.4 }}
+              >
+                <img
+                  src={`https://source.unsplash.com/400x300/?nail,${index}`}
+                  alt={service.name}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4 flex flex-col flex-grow">
+                  <h2 className="text-lg font-semibold text-pink-600 mb-1">
+                    {service.name}
+                  </h2>
+                  <p className="text-gray-700 text-sm mb-2 flex-grow">{service.description}</p>
+                  <p className="text-gray-900 font-semibold mb-3">
+                    R$ {parseFloat(service.price).toFixed(2)} — {service.duration_minutes} min
+                  </p>
+                  <button
+                    onClick={() => navigate(`/services/${service.id}/schedule`, { state: { service } })}
+                    className="mt-auto bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 px-4 rounded transition-colors duration-200"
+                  >
+                    Agendar
+                  </button>
+
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   )
 }
