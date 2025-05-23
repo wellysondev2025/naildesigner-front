@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false)
       localStorage.removeItem('access')
       localStorage.removeItem('refresh')
-      alert('Erro no login: usuário não encontrado')
+      toast.error('Erro no login: usuário não encontrado')
     }
   }
 

@@ -1,6 +1,6 @@
 // src/Appointments.jsx
 import React, { useEffect, useState } from 'react'
-import { authFetch } from './api'
+import { authFetch } from '../../api/api'
 import { useNavigate } from 'react-router-dom'
 
 function Appointments() {
@@ -14,7 +14,7 @@ function Appointments() {
         const response = await authFetch('http://localhost:8000/api/appointments/my/')
         if (response.status === 401) {
           // não autorizado - usuário precisa logar
-          alert('Por favor, faça login.')
+          toast.error('Por favor, faça login.')
           navigate('/auth') // ajustar para a sua rota de login/cadastro
           return
         }

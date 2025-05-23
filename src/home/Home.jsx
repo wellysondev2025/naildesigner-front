@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import React from 'react'
-import Navbar from "./components/Navbar"
+import Navbar from "../components/Navbar"
+import Newsletter from "../components/Newsletter"
 import { motion } from 'framer-motion'
 
 const cardsData = [
@@ -30,6 +31,7 @@ const cardVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 }
 }
+
 
 export default function Home() {
   return (
@@ -66,6 +68,11 @@ export default function Home() {
               </div>
             </motion.div>
           ))}
+        </div>
+
+        {/* Newsletter */}
+        <div className="mt-16">
+          <Newsletter />
         </div>
       </div>
     </>

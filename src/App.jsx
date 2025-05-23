@@ -1,14 +1,16 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import AuthForm from './AuthForm'
-import Home from './Home'
-import Appointments from './Appointments'
-import { PrivateRoute } from "./PrivateRoute";
-import Services from './components/Services'
+import AuthForm from './auth/AuthForm'
+import Home from './home/Home'
+import Appointments from './features/Appointments/Appointments'
+import { PrivateRoute } from "./components/PrivateRoute";
+import Services from './features/services/Services'
 import Navbar from './components/Navbar'  // ou o caminho correto para o seu arquivo Navbar.jsx
-import ScheduleService from './ScheduleService'
-import ServiceManager from './ServiceManager' // ou './pages/ServiceManager' se organizar depois
-import ManageAppointments from './ManageAppointments'
+import ScheduleService from './features/services/ScheduleService'
+import ServiceManager from './features/services/ServiceManager' // ou './pages/ServiceManager' se organizar depois
+import ManageAppointments from './features/appointments/ManageAppointments'
+import Footer from './components/Footer'  // ou o caminho correto para o seu arquivo Navbar.jsx
+
 
 
 
@@ -38,6 +40,7 @@ function App() {
       {/* Agendamentos protegidos */}
       <Route path="/appointments" element={<PrivateRoute><Appointments /></PrivateRoute>} />
     </Routes>
+    <Footer />
     </>
   )
 }

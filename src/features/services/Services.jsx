@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import Navbar from './Navbar'
 import { useNavigate } from 'react-router-dom'
 
 export default function Services() {
@@ -8,7 +7,7 @@ export default function Services() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/services/')
+    fetch('http://localhost:8000/api/services/public/')
       .then((res) => res.json())
       .then((data) => setServices(data))
       .catch((err) => console.error('Erro ao buscar serviços:', err))
@@ -21,8 +20,6 @@ export default function Services() {
 
   return (
     <>
-      <Navbar />
-
       <div className="pt-20 max-w-7xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-center text-pink-600 mb-10">
           Nossos Serviços
@@ -41,11 +38,17 @@ export default function Services() {
                 animate="visible"
                 transition={{ delay: index * 0.1, duration: 0.4 }}
               >
-                <img
-                  src={`https://source.unsplash.com/400x300/?nail,${index}`}
-                  alt={service.name}
-                  className="w-full h-48 object-cover"
-                />
+              <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                {service.image ? (
+                  <img
+                    src={service.image}
+                    alt={service.name}
+                    className="w-full h-48 object-cover"
+                  />
+                ) : (
+                  <span className="text-gray-600">Sem imagem</span>
+                )}
+              </div>
                 <div className="p-4 flex flex-col flex-grow">
                   <h2 className="text-lg font-semibold text-pink-600 mb-1">
                     {service.name}

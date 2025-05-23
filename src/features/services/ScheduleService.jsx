@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import Navbar from './components/Navbar'
-
+  
 export default function ScheduleService() {
   const { id } = useParams()
   const [service, setService] = useState(null)
@@ -20,13 +19,13 @@ export default function ScheduleService() {
     e.preventDefault()
     const access = localStorage.getItem('access')
     if (!access) {
-      alert('Você precisa estar logado para agendar.')
+      toast.error('Você precisa estar logado para agendar.')
       navigate('/auth')
       return
     }
 
     if (!date || !time) {
-      alert('Por favor, selecione data e horário.')
+      toast.error('Por favor, selecione data e horário.')
       return
     }
 
@@ -47,22 +46,21 @@ export default function ScheduleService() {
       })
 
       if (response.ok) {
-        alert('Agendamento realizado com sucesso!')
+        toast.error('Agendamento realizado com sucesso!')
         navigate('/appointments')
       } else {
         const errorData = await response.json()
         console.error('Erro no agendamento:', errorData)
-        alert('Erro ao agendar. Verifique os dados e tente novamente.')
+        toast.error('Erro ao agendar. Verifique os dados e tente novamente.')
       }
     } catch (err) {
       console.error('Erro:', err)
-      alert('Erro inesperado.')
+      toast.error('Erro inesperado.')
     }
   }
 
   return (
     <>
-      <Navbar />
       <div className="pt-20 max-w-xl mx-auto px-4">
         {!service ? (
           <p className="text-center">Carregando serviço...</p>

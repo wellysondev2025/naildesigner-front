@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { AuthContext } from './context/AuthContext' // ajuste o caminho conforme sua estrutura
+import { AuthContext } from '../context/AuthContext'
+import { toast } from 'react-toastify'
 
 function AuthForm() {
   const [isLogin, setIsLogin] = useState(true)
@@ -36,21 +37,21 @@ function AuthForm() {
         })
         const userData = await userRes.json()
 
-        login(tokens.access, tokens.refresh, userData) // salva user completo
-        alert('Login realizado com sucesso!')
+        login(tokens.access, tokens.refresh, userData)
+        toast.success('Login realizado com sucesso!')
         navigate('/home')
       } else {
-        alert('Erro no login. Verifique seus dados.')
+        toast.error('Erro no login. Verifique seus dados.')
       }
     } catch (error) {
-      alert('Erro de conexão.')
+      toast.error('Erro de conexão.')
       console.error(error)
     }
   }
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
-      alert('As senhas não coincidem.')
+      toast.warn('As senhas não coincidem.')
       return
     }
 
@@ -62,22 +63,22 @@ function AuthForm() {
           username,
           email,
           password,
-          confirm_password: confirmPassword,  // aqui!
+          confirm_password: confirmPassword,
           phone,
           is_nail_designer: false,
         }),
       })
       const data = await response.json()
       if (response.ok) {
-        alert('Cadastro realizado! Faça login.')
+        toast.success('Cadastro realizado! Faça login.')
         setIsLogin(true)
         resetForm()
       } else {
-        alert('Erro ao cadastrar. Verifique os campos.')
+        toast.error('Erro ao cadastrar. Verifique os campos.')
         console.log(data)
       }
     } catch (error) {
-      alert('Erro de conexão.')
+      toast.error('Erro de conexão.')
       console.error(error)
     }
   }

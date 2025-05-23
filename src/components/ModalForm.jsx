@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 export default function ModalForm({ service, onClose, onSave }) {
   const [form, setForm] = useState({
@@ -7,6 +8,7 @@ export default function ModalForm({ service, onClose, onSave }) {
     price: '',
     duration_minutes: '',
   })
+  const [imageFile, setImageFile] = useState(null)
   const [loading, setLoading] = useState(false)
 
   const access = localStorage.getItem('access')
@@ -16,9 +18,10 @@ export default function ModalForm({ service, onClose, onSave }) {
       setForm({
         name: service.name || '',
         description: service.description || '',
-        price: service.price || '',
-        duration_minutes: service.duration_minutes || '',
+        price: service.price !== undefined ? service.price.toString() : '',
+        duration_minutes: service.duration_minutes !== undefined ? service.duration_minutes.toString() : '',
       })
+      setImageFile(null)
     } else {
       setForm({
         name: '',
@@ -26,44 +29,77 @@ export default function ModalForm({ service, onClose, onSave }) {
         price: '',
         duration_minutes: '',
       })
+      setImageFile(null)
     }
   }, [service])
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleFileChange = (e) => {
+    setImageFile(e.target.files[0])
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
 
+    const payload = new FormData()
+    payload.append('name', form.name.trim())
+    payload.append('description', form.description.trim())
+    payload.append('price', parseFloat(form.price))
+    payload.append('duration_minutes', parseInt(form.duration_minutes, 10))
+    if (imageFile) {
+      payload.append('image', imageFile)
+    }
+
+    // Validação simples
+    if (!form.name.trim()) {
+      toast.error('O nome do serviço é obrigatório.')
+      setLoading(false)
+      return
+    }
+    if (isNaN(parseFloat(form.price)) || parseFloat(form.price) <= 0) {
+      toast.error('Informe um preço válido maior que zero.')
+      setLoading(false)
+      return
+    }
+    if (isNaN(parseInt(form.duration_minutes, 10)) || parseInt(form.duration_minutes, 10) <= 0) {
+      toast.error('Informe uma duração válida maior que zero.')
+      setLoading(false)
+      return
+    }
+
     try {
       const url = service
         ? `http://localhost:8000/api/services/${service.id}/`
         : 'http://localhost:8000/api/services/'
 
-      const method = service ? 'PUT' : 'POST'
+      const method = service ? 'PATCH' : 'POST'
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${access}`,
         },
-        body: JSON.stringify(form),
+        body: payload,
       })
 
       if (!response.ok) {
         const errorData = await response.json()
         console.error('Erro ao salvar serviço:', errorData)
-        alert('Erro ao salvar serviço.')
+        toast.error('Erro ao salvar serviço. Verifique os dados e tente novamente.')
       } else {
-        alert(service ? 'Serviço atualizado!' : 'Serviço criado!')
+        toast.success(service ? 'Serviço atualizado com sucesso!' : 'Serviço criado com sucesso!')
         onSave()
+        setForm({ name: '', description: '', price: '', duration_minutes: '' })
+        setImageFile(null)
       }
     } catch (err) {
       console.error('Erro inesperado:', err)
-      alert('Erro inesperado.')
+      toast.error('Erro inesperado. Tente novamente mais tarde.')
     } finally {
       setLoading(false)
     }
@@ -93,6 +129,7 @@ export default function ModalForm({ service, onClose, onSave }) {
             onChange={handleChange}
             required
             className="w-full border border-gray-300 rounded px-3 py-2 mb-3"
+            disabled={loading}
           />
 
           <textarea
@@ -101,6 +138,7 @@ export default function ModalForm({ service, onClose, onSave }) {
             value={form.description}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded px-3 py-2 mb-3"
+            disabled={loading}
           />
 
           <input
@@ -111,7 +149,9 @@ export default function ModalForm({ service, onClose, onSave }) {
             value={form.price}
             onChange={handleChange}
             required
+            min="0"
             className="w-full border border-gray-300 rounded px-3 py-2 mb-3"
+            disabled={loading}
           />
 
           <input
@@ -121,13 +161,39 @@ export default function ModalForm({ service, onClose, onSave }) {
             value={form.duration_minutes}
             onChange={handleChange}
             required
-            className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
+            min="0"
+            className="w-full border border-gray-300 rounded px-3 py-2 mb-3"
+            disabled={loading}
           />
+
+          <div className="mb-4">
+            <label
+              htmlFor="imageUpload"
+              className="cursor-pointer inline-block bg-pink-600 hover:bg-pink-700 text-white font-medium py-2 px-4 rounded transition duration-300"
+            >
+              Escolher imagem
+            </label>
+            <input
+              type="file"
+              id="imageUpload"
+              accept="image/*"
+              onChange={handleFileChange}
+              disabled={loading}
+              className="hidden"
+            />
+            {imageFile && (
+              <p className="text-sm text-gray-700 mt-2">Imagem selecionada: {imageFile.name}</p>
+            )}
+          </div>
 
           <div className="flex justify-end gap-2">
             <button
               type="button"
-              onClick={onClose}
+              onClick={() => {
+                onClose()
+                setForm({ name: '', description: '', price: '', duration_minutes: '' })
+                setImageFile(null)
+              }}
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded"
               disabled={loading}
             >
